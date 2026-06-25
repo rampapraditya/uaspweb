@@ -57,14 +57,30 @@
             <div class="modal-body">
                 <form id="form">
                     <div class="mb-3">
-                        <label></label>
-                        <input type="text" class="form-control" autocomplete="off">
+                        <label>Kode Supplier</label>
+                        <input type="text" name="kode" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label>Nama Supplier</label>
+                        <input type="text" name="nama" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label>Alamat Supplier</label>
+                        <input type="text" name="alamat" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label>Kota Supplier</label>
+                        <input type="text" name="kota" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label>HP Supplier</label>
+                        <input type="text" name="hp" class="form-control" autocomplete="off">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-primary" onclick="simpan()">Simpan</button>
             </div>
         </div>
     </div>
@@ -85,5 +101,9 @@
 
     function hapus() {
 
+    }
+
+    function simpan(){
+        
     }
 </script>
