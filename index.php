@@ -1,3 +1,6 @@
+<?php
+include 'koneksi.php';
+?>
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
 
@@ -101,6 +104,7 @@
       display: block !important;
     }
   </style>
+  <script src="assets/js/jquery.min.js"></script>
 </head>
 
 <body>
@@ -193,7 +197,21 @@
     <div class="container">
       <?php
       include 'menu.php';
-      include 'pages/dashboard/index.php';
+
+      if (isset($_GET['menu'])) {
+        $menu = $_GET['menu'];
+        if ($menu == "dashboard") {
+          include 'pages/dashboard/index.php';
+        } else if ($menu == "supplier") {
+          include 'pages/supplier/index.php';
+        } else if ($menu == "produk") {
+          include 'pages/produk/index.php';
+        }
+      } else {
+        include 'pages/dashboard/index.php';
+      }
+
+
       ?>
     </div>
   </main>
