@@ -18,29 +18,8 @@
                         <th scope="col" style="text-align: center;">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php
-                    $query = mysqli_query($conn, "select * from produk");
-                    while ($row = mysqli_fetch_assoc($query)) {
-                    ?>
-                        <tr>
-                            <th><?php echo $row['id'] ?></th>
-                            <td><?php echo $row['nama'] ?></td>
-                            <td><?php echo $row['satuan'] ?></td>
-                            <td style="text-align: right;"><?php echo number_format($row['hargabeli']) ?></td>
-                            <td style="text-align: right;"><?php echo number_format($row['hargajual']) ?></td>
-                            <td style="text-align: center;">
-                                <button type="button" class="btn btn-warning" onclick="edit()">
-                                    Edit
-                                </button>
-                                <button type="button" class="btn btn-danger">
-                                    Hapus
-                                </button>
-                            </td>
-                        </tr>
-                    <?php
-                    }
-                    ?>
+                <tbody id="data-produk">
+
                 </tbody>
             </table>
         </div>
@@ -87,6 +66,27 @@
 </div>
 
 <script>
+    $(document).ready(function() {
+        loadData();
+    });
+
+    // Fungsi untuk mengambil string HTML dari proses.php
+    function loadData() {
+        $.ajax({
+            url: 'pages/produk/proses.php',
+            type: 'POST',
+            data: {
+                aksi: 'tampil_data'
+            },
+            success: function(response) {
+                $('#data-produk').html(response);
+            },
+            error: function(xhr, status, error) {
+                $('#data-produk').html("<tr><td colspan='6' style='text-align:center; color:red;'>Gagal memuat data dari server.</td></tr>");
+            }
+        });
+    }
+
     function add() {
         $('#form')[0].reset();
         $('#exampleModal').modal('show');
@@ -99,11 +99,154 @@
         $('.modal-title').text('Ganti Supplier');
     }
 
-    function hapus() {
+    function save() {
+        var kode = document.getElementById('kode').value;
+        var nama = document.getElementById('nama').value;
 
+        if (nama === '') {
+            iziToast.error({
+                title: 'Error',
+                message: "Access name cannot be empty",
+                position: 'topRight'
+            });
+        } else {
+            $('#btnSave').text('Loading...');
+            $('#btnSave').attr('disabled', true);
+
+            var url = "";
+            if (save_method === 'add') {
+                url = "";
+            } else {
+                url = "";
+            }
+
+            var form_data = new FormData();
+            form_data.append('kode', kode);
+            form_data.append('nama', nama);
+
+            $.ajax({
+                url: url,
+                dataType: 'JSON',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                type: 'POST',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function(response, status, xhr) {
+                    var csrfToken = xhr.getResponseHeader('X-CSRF-TOKEN');
+                    $('meta[name="csrf-token"]').attr('content', csrfToken);
+
+                    $('#btnSave').text('Simpan');
+                    $('#btnSave').attr('disabled', false);
+
+                    if (response.status == "Data saved") {
+                        iziToast.success({
+                            title: 'Info',
+                            message: response.status,
+                            position: 'topRight'
+                        });
+                        reload();
+                        $('#modal_form').modal('hide');
+                    } else {
+                        iziToast.warning({
+                            title: 'Info',
+                            message: response.status,
+                            position: 'topRight'
+                        });
+                    }
+
+                },
+                error: function(response, status, xhr) {
+                    var csrfToken = xhr.getResponseHeader('X-CSRF-TOKEN');
+                    $('meta[name="csrf-token"]').attr('content', csrfToken);
+
+                    iziToast.error({
+                        title: 'Error',
+                        message: "Error json " + errorThrown,
+                        position: 'topRight'
+                    });
+
+                    $('#btnSave').text('Simpan');
+                    $('#btnSave').attr('disabled', false);
+                }
+            });
+        }
     }
 
-    function simpan(){
-        
+    function hapus(id, nama) {
+        iziToast.show({
+            color: 'dark',
+            icon: 'fas fa-question',
+            title: 'Confirmation',
+            message: 'Are you sure you want to remove access ' + nama + ' ?',
+            position: 'center', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
+            progressBarColor: 'rgb(0, 255, 184)',
+            buttons: [
+                [
+                    '<button>Ok</button>',
+                    function(instance, toast) {
+                        instance.hide({
+                            transitionOut: 'fadeOutUp'
+                        }, toast);
+
+                        $.ajax({
+                            url: "" + id,
+                            type: "GET",
+                            dataType: "JSON",
+                            success: function(data) {
+                                iziToast.success({
+                                    title: 'Info',
+                                    message: data.status,
+                                    position: 'topRight'
+                                });
+                                reload();
+
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                iziToast.error({
+                                    title: 'Error',
+                                    message: "Error json " + errorThrown,
+                                    position: 'topRight'
+                                });
+                            }
+                        });
+                    }
+                ],
+                [
+                    '<button>Close</button>',
+                    function(instance, toast) {
+                        instance.hide({
+                            transitionOut: 'fadeOutUp'
+                        }, toast);
+                    }
+                ]
+            ]
+        });
+    }
+
+    function ganti(id) {
+        save_method = 'update';
+        $('#form')[0].reset();
+        $('#modal_form').modal('show');
+        $('.modal-title').text('Change Access');
+        $.ajax({
+            url: "" + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data) {
+                $('[name="kode"]').val(data.idakses);
+                $('[name="nama"]').val(data.namaakses);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                iziToast.error({
+                    title: 'Error',
+                    message: "Error json " + errorThrown,
+                    position: 'topRight'
+                });
+            }
+        });
     }
 </script>
