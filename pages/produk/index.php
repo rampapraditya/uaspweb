@@ -19,7 +19,6 @@
                     </tr>
                 </thead>
                 <tbody id="data-produk">
-
                 </tbody>
             </table>
         </div>
@@ -36,24 +35,24 @@
             <div class="modal-body">
                 <form id="form">
                     <div class="mb-3">
-                        <label>Kode Supplier</label>
-                        <input type="text" name="kode" class="form-control" autocomplete="off">
+                        <label>Kode Produk</label>
+                        <input type="text" id="kode" name="kode" class="form-control" autocomplete="off">
                     </div>
                     <div class="mb-3">
-                        <label>Nama Supplier</label>
-                        <input type="text" name="nama" class="form-control" autocomplete="off">
+                        <label>Nama Produk</label>
+                        <input type="text" id="nama" name="nama" class="form-control" autocomplete="off">
                     </div>
                     <div class="mb-3">
-                        <label>Alamat Supplier</label>
-                        <input type="text" name="alamat" class="form-control" autocomplete="off">
+                        <label>Satuan</label>
+                        <input type="text" id="satuan" name="satuan" class="form-control" autocomplete="off">
                     </div>
                     <div class="mb-3">
-                        <label>Kota Supplier</label>
-                        <input type="text" name="kota" class="form-control" autocomplete="off">
+                        <label>Harga Beli</label>
+                        <input type="text" id="hargabeli" name="hargabeli" class="form-control" autocomplete="off">
                     </div>
                     <div class="mb-3">
-                        <label>HP Supplier</label>
-                        <input type="text" name="hp" class="form-control" autocomplete="off">
+                        <label>Harga Jual</label>
+                        <input type="text" id="hargajual" name="hargajual" class="form-control" autocomplete="off">
                     </div>
                 </form>
             </div>
@@ -66,6 +65,9 @@
 </div>
 
 <script>
+
+    let save_method = "";
+
     $(document).ready(function() {
         loadData();
     });
@@ -89,91 +91,67 @@
 
     function add() {
         $('#form')[0].reset();
+        save_method = "add";
         $('#exampleModal').modal('show');
-        $('.modal-title').text('Tambah Supplier');
+        $('.modal-title').text('Tambah Produk');
     }
 
-    function edit() {
-        $('#form')[0].reset();
-        $('#exampleModal').modal('show');
-        $('.modal-title').text('Ganti Supplier');
-    }
+    function simpan() {
+        let kode = document.getElementById('kode').value;
+        let nama = document.getElementById('nama').value;
+        let satuan = document.getElementById('satuan').value;
+        let hargabeli = document.getElementById('hargabeli').value;
+        let hargajual = document.getElementById('hargajual').value;
 
-    function save() {
-        var kode = document.getElementById('kode').value;
-        var nama = document.getElementById('nama').value;
-
-        if (nama === '') {
-            iziToast.error({
-                title: 'Error',
-                message: "Access name cannot be empty",
-                position: 'topRight'
-            });
+        if (kode == "") {
+            alert("Kode produk tidak boleh kosong");
+        } else if(nama == ""){
+            alert("Nama produk tidak boleh kosong");
+        } else if(satuan == ""){
+            alert("Satuan tidak boleh kosong");
+        } else if(hargabeli == ""){
+            alert("Harga beli tidak boleh kosong");
+        } else if(hargajual == ""){
+            alert("Harga jual tidak boleh kosong");
         } else {
-            $('#btnSave').text('Loading...');
-            $('#btnSave').attr('disabled', true);
-
-            var url = "";
+            
+            let url = "";
             if (save_method === 'add') {
-                url = "";
+                url = "pages/produk/proses.php";
             } else {
                 url = "";
             }
 
             var form_data = new FormData();
+            form_data.append('aksi', "simpan");
             form_data.append('kode', kode);
             form_data.append('nama', nama);
+            form_data.append('satuan', satuan);
+            form_data.append('hargabeli', hargabeli);
+            form_data.append('hargajual', hargajual);
 
             $.ajax({
                 url: url,
-                dataType: 'JSON',
+                dataType: 'TEXT',
                 cache: false,
                 contentType: false,
                 processData: false,
                 data: form_data,
                 type: 'POST',
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
-                },
                 success: function(response, status, xhr) {
-                    var csrfToken = xhr.getResponseHeader('X-CSRF-TOKEN');
-                    $('meta[name="csrf-token"]').attr('content', csrfToken);
-
-                    $('#btnSave').text('Simpan');
-                    $('#btnSave').attr('disabled', false);
-
-                    if (response.status == "Data saved") {
-                        iziToast.success({
-                            title: 'Info',
-                            message: response.status,
-                            position: 'topRight'
-                        });
-                        reload();
-                        $('#modal_form').modal('hide');
-                    } else {
-                        iziToast.warning({
-                            title: 'Info',
-                            message: response.status,
-                            position: 'topRight'
-                        });
-                    }
-
+                    alert(response);
                 },
                 error: function(response, status, xhr) {
-                    var csrfToken = xhr.getResponseHeader('X-CSRF-TOKEN');
-                    $('meta[name="csrf-token"]').attr('content', csrfToken);
-
-                    iziToast.error({
-                        title: 'Error',
-                        message: "Error json " + errorThrown,
-                        position: 'topRight'
-                    });
-
-                    $('#btnSave').text('Simpan');
-                    $('#btnSave').attr('disabled', false);
+                    alert(status);
                 }
             });
         }
+    }
+
+    function edit() {
+        $('#form')[0].reset();
+        $('#exampleModal').modal('show');
+        $('.modal-title').text('Ganti Produk');
     }
 
     function hapus(id, nama) {

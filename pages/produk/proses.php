@@ -7,9 +7,10 @@ $aksi = $_POST['aksi'] ?? $_GET['aksi'] ?? '';
 
 switch ($aksi) {
     case 'tampil_data':
-        $query = mysqli_query($conn, "SELECT * FROM produk");
+        
         $html_string = '';
 
+        $query = mysqli_query($conn, "SELECT * FROM produk");
         while ($row = mysqli_fetch_assoc($query)) {
             // Format angka harga
             $harga_beli = number_format($row['hargabeli']);
@@ -41,11 +42,8 @@ switch ($aksi) {
         echo $html_string;
         break;
 
-    case 'hapus_data':
-        // Contoh aksi lain jika ada
-        $id = $_POST['id'] ?? '';
-        // Proses hapus di sini...
-        echo "Data dengan ID $id berhasil dihapus";
+    case 'simpan':
+        echo "Data hoho hihi";
         break;
 
     default:
