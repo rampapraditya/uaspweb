@@ -94,6 +94,7 @@
         save_method = "add";
         $('#exampleModal').modal('show');
         $('.modal-title').text('Tambah Produk');
+        $('#kode').attr('readonly', false);
     }
 
     function simpan() {
@@ -115,15 +116,14 @@
             alert("Harga jual tidak boleh kosong");
         } else {
             
-            let url = "";
+            var form_data = new FormData();
+            
             if (save_method === 'add') {
-                url = "pages/produk/proses.php";
+                form_data.append('aksi', "simpan");
             } else {
-                url = "";
+                form_data.append('aksi', "ganti");
             }
 
-            var form_data = new FormData();
-            form_data.append('aksi', "simpan");
             form_data.append('kode', kode);
             form_data.append('nama', nama);
             form_data.append('satuan', satuan);
@@ -131,7 +131,7 @@
             form_data.append('hargajual', hargajual);
 
             $.ajax({
-                url: url,
+                url: "pages/produk/proses.php",
                 dataType: 'TEXT',
                 cache: false,
                 contentType: false,
@@ -150,10 +150,39 @@
         }
     }
 
-    function edit() {
+    function edit(id) {
         $('#form')[0].reset();
         $('#exampleModal').modal('show');
         $('.modal-title').text('Ganti Produk');
+
+        let form_data = new FormData();
+        form_data.append('aksi', 'ambil_data');
+        form_data.append('kode', id);
+
+        // Jalankan AJAX
+        $.ajax({
+            url: 'pages/produk/proses.php',
+            type: 'POST',
+            data: form_data,
+            processData: false,
+            contentType: false,
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.status === 'sukses') {
+                    $('#kode').attr('readonly', true); // biar tidak bisa di edit
+                    $('#kode').val(response.data.id);
+                    $('#nama').val(response.data.nama);
+                    $('#satuan').val(response.data.satuan);
+                    $('#hargabeli').val(response.data.hargabeli);
+                    $('#hargajual').val(response.data.hargajual);
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Gagal mengambil data untuk edit:', error);
+            }
+        });
     }
 
     function hapus(id, nama) {

@@ -23,10 +23,10 @@ switch ($aksi) {
                                 <td style='text-align: right;'>{$harga_beli}</td>
                                 <td style='text-align: right;'>{$harga_jual}</td>
                                 <td style='text-align: center;'>
-                                    <button type='button' class='btn btn-warning' onclick='edit({$row['id']})'>
+                                    <button type='button' class='btn btn-warning btn-sm' onclick=\"edit('{$row['id']}')\">
                                         Edit
                                     </button>
-                                    <button type='button' class='btn btn-danger' onclick='hapus({$row['id']})'>
+                                    <button type='button' class='btn btn-danger btn-sm' onclick=\"hapus('{$row['id']}')\">
                                         Hapus
                                     </button>
                                 </td>
@@ -68,8 +68,25 @@ switch ($aksi) {
             echo "gagal: " . mysqli_error($conn); // Kirim pesan error jika gagal
         }
         break;
-        
+    case 'ambil_data':
+        $kode = $_POST['kode'] ?? '';
 
+        // Query mengambil data berdasarkan ID/Kode
+        $query = mysqli_query($conn, "SELECT * FROM produk WHERE id = '$kode'");
+        $data  = mysqli_fetch_assoc($query);
+
+        if ($data) {
+            echo json_encode([
+                'status' => 'sukses',
+                'data'   => $data
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'gagal',
+                'message'=> 'Data produk tidak ditemukan.'
+            ]);
+        }
+        break;
     default:
         echo "Aksi tidak dikenal.";
         break;
