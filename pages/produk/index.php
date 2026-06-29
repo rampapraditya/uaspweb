@@ -65,14 +65,12 @@
 </div>
 
 <script>
-
     let save_method = "";
 
     $(document).ready(function() {
         loadData();
     });
 
-    // Fungsi untuk mengambil string HTML dari proses.php
     function loadData() {
         $.ajax({
             url: 'pages/produk/proses.php',
@@ -106,18 +104,18 @@
 
         if (kode == "") {
             alert("Kode produk tidak boleh kosong");
-        } else if(nama == ""){
+        } else if (nama == "") {
             alert("Nama produk tidak boleh kosong");
-        } else if(satuan == ""){
+        } else if (satuan == "") {
             alert("Satuan tidak boleh kosong");
-        } else if(hargabeli == ""){
+        } else if (hargabeli == "") {
             alert("Harga beli tidak boleh kosong");
-        } else if(hargajual == ""){
+        } else if (hargajual == "") {
             alert("Harga jual tidak boleh kosong");
         } else {
-            
+
             var form_data = new FormData();
-            
+
             if (save_method === 'add') {
                 form_data.append('aksi', "simpan");
             } else {
@@ -186,76 +184,27 @@
     }
 
     function hapus(id, nama) {
-        iziToast.show({
-            color: 'dark',
-            icon: 'fas fa-question',
-            title: 'Confirmation',
-            message: 'Are you sure you want to remove access ' + nama + ' ?',
-            position: 'center', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
-            progressBarColor: 'rgb(0, 255, 184)',
-            buttons: [
-                [
-                    '<button>Ok</button>',
-                    function(instance, toast) {
-                        instance.hide({
-                            transitionOut: 'fadeOutUp'
-                        }, toast);
+        if (confirm("Apakah Anda yakin ingin menghapus produk '" + nama + "' (Kode: " + id + ")?")) {
+            let form_data = new FormData();
+            form_data.append('aksi', 'hapus_data');
+            form_data.append('kode', id);
 
-                        $.ajax({
-                            url: "" + id,
-                            type: "GET",
-                            dataType: "JSON",
-                            success: function(data) {
-                                iziToast.success({
-                                    title: 'Info',
-                                    message: data.status,
-                                    position: 'topRight'
-                                });
-                                reload();
-
-                            },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                iziToast.error({
-                                    title: 'Error',
-                                    message: "Error json " + errorThrown,
-                                    position: 'topRight'
-                                });
-                            }
-                        });
-                    }
-                ],
-                [
-                    '<button>Close</button>',
-                    function(instance, toast) {
-                        instance.hide({
-                            transitionOut: 'fadeOutUp'
-                        }, toast);
-                    }
-                ]
-            ]
-        });
+            $.ajax({
+                url: "pages/produk/proses.php",
+                type: 'POST',
+                data: form_data,
+                processData: false,
+                contentType: false,
+                dataType: 'TEXT',
+                success: function(response) {
+                    alert(response);
+                    loadData();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            });
+        }
     }
 
-    function ganti(id) {
-        save_method = 'update';
-        $('#form')[0].reset();
-        $('#modal_form').modal('show');
-        $('.modal-title').text('Change Access');
-        $.ajax({
-            url: "" + id,
-            type: "GET",
-            dataType: "JSON",
-            success: function(data) {
-                $('[name="kode"]').val(data.idakses);
-                $('[name="nama"]').val(data.namaakses);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                iziToast.error({
-                    title: 'Error',
-                    message: "Error json " + errorThrown,
-                    position: 'topRight'
-                });
-            }
-        });
-    }
 </script>

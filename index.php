@@ -11,7 +11,7 @@ include 'koneksi.php';
   <meta name="Irene"/>
   <meta name="generator" content="Astro v5.13.2" />
   <meta name="theme-color" content="#712cf9" />
-  <title>Navbar Template · Bootstrap v5.3</title>
+  <title>IRENE & ALVIN</title>
   
   <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/navbars/" />
   <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />

@@ -26,7 +26,7 @@ switch ($aksi) {
                                     <button type='button' class='btn btn-warning btn-sm' onclick=\"edit('{$row['id']}')\">
                                         Edit
                                     </button>
-                                    <button type='button' class='btn btn-danger btn-sm' onclick=\"hapus('{$row['id']}')\">
+                                    <button type='button' class='btn btn-danger btn-sm' onclick=\"hapus('{$row['id']}', '{$row['nama']}')\">
                                         Hapus
                                     </button>
                                 </td>
@@ -85,6 +85,50 @@ switch ($aksi) {
                 'status' => 'gagal',
                 'message'=> 'Data produk tidak ditemukan.'
             ]);
+        }
+        break;
+    case 'ganti':
+        $kode      = $_POST['kode'] ?? '';
+        $nama      = $_POST['nama'] ?? '';
+        $satuan    = $_POST['satuan'] ?? '';
+        $hargabeli = $_POST['hargabeli'] ?? 0;
+        $hargajual = $_POST['hargajual'] ?? 0;
+
+        // Validasi sederhana agar data tidak kosong
+        if (empty($kode) || empty($nama)) {
+            echo "gagal: Kode dan Nama Produk tidak boleh kosong!";
+            exit;
+        }
+
+        $query = "UPDATE produk SET nama = '$nama',  satuan = '$satuan',  hargabeli = '$hargabeli',  hargajual = '$hargajual' WHERE id = '$kode'";
+        $simpan = mysqli_query($conn, $query);
+
+        if ($simpan) {
+            echo "sukses"; // Kirim teks 'sukses' kembali ke AJAX jika berhasil
+        } else {
+            echo "gagal: " . mysqli_error($conn); // Kirim pesan error jika gagal
+        }
+        break;
+    case 'hapus_data':
+        
+        // Tangkap kode produk yang mau dihapus dari form_data.append('kode', ...)
+        $kode = $_POST['kode'] ?? '';
+
+        // Validasi jika kode kosong
+        if (empty($kode)) {
+            echo "gagal: Kode produk tidak valid!";
+            exit;
+        }
+
+        // Query DELETE berdasarkan Primary Key (id)
+        $query = "DELETE FROM produk WHERE id = '$kode'";
+        $hapus = mysqli_query($conn, $query);
+
+        // Kirim respon teks kembali ke AJAX
+        if ($hapus) {
+            echo "sukses";
+        } else {
+            echo "gagal: " . mysqli_error($conn);
         }
         break;
     default:
