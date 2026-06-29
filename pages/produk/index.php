@@ -140,6 +140,8 @@
                 type: 'POST',
                 success: function(response, status, xhr) {
                     alert(response);
+                    $('#exampleModal').modal('hide');
+                    loadData();
                 },
                 error: function(response, status, xhr) {
                     alert(status);

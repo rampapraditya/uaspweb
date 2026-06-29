@@ -43,8 +43,32 @@ switch ($aksi) {
         break;
 
     case 'simpan':
-        echo "Data hoho hihi";
+        // Menangkap data dari form_data.append
+        $kode      = $_POST['kode'] ?? '';
+        $nama      = $_POST['nama'] ?? '';
+        $satuan    = $_POST['satuan'] ?? '';
+        $hargabeli = $_POST['hargabeli'] ?? 0;
+        $hargajual = $_POST['hargajual'] ?? 0;
+
+        // Validasi sederhana agar data tidak kosong
+        if (empty($kode) || empty($nama)) {
+            echo "gagal: Kode dan Nama Produk tidak boleh kosong!";
+            exit;
+        }
+
+        // Query Insert ke database (Sesuaikan dengan nama tabel & kolom Anda)
+        $query = "INSERT INTO produk (id, nama, satuan, hargabeli, hargajual) 
+                  VALUES ('$kode', '$nama', '$satuan', '$hargabeli', '$hargajual')";
+        
+        $simpan = mysqli_query($conn, $query);
+
+        if ($simpan) {
+            echo "sukses"; // Kirim teks 'sukses' kembali ke AJAX jika berhasil
+        } else {
+            echo "gagal: " . mysqli_error($conn); // Kirim pesan error jika gagal
+        }
         break;
+        
 
     default:
         echo "Aksi tidak dikenal.";
