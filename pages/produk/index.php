@@ -10,6 +10,39 @@
             <table class="table" style="margin-top: 20px;">
                 <thead>
                     <tr>
+<<<<<<< HEAD
+                        <th scope="col">Kode Produk</th>
+                        <th scope="col">Nama Produk</th>
+                        <th scope="col">Satuan</th>
+                        <th scope="col">Harga Jual</th>
+                         <th scope="col">Harga Beli</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $query = mysqli_query($conn, "select * from produk");
+                    while ($row = mysqli_fetch_assoc($query)) {
+                    ?>
+                        <tr>
+                            <th><?php echo $row['id'] ?></th>
+                            <td><?php echo $row['nama'] ?></td>
+                            <td><?php echo $row['satuan'] ?></td>
+                            <td><?php echo $row['hargabeli'] ?></td>
+                            <td><?php echo $row['hargajual'] ?></td>
+                            <td>
+                                <button type="button" class="btn btn-warning" onclick="edit()">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-danger">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+=======
                         <th scope="col" style="text-align: center;">Kode</th>
                         <th scope="col" style="text-align: center;">Nama Produk</th>
                         <th scope="col" style="text-align: center;">Satuan</th>
@@ -19,6 +52,7 @@
                     </tr>
                 </thead>
                 <tbody id="data-produk">
+>>>>>>> b9d8ac8ae3d159a0e466a7d31d673e32e26ef033
                 </tbody>
             </table>
         </div>
@@ -36,6 +70,25 @@
                 <form id="form">
                     <div class="mb-3">
                         <label>Kode Produk</label>
+<<<<<<< HEAD
+                        <input type="text" name="kode_produk" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label>Nama Produk</label>
+                        <input type="text" name="nama_produk" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label>Satuan</label>
+                        <input type="text" name="satuan" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label>Harga Jual</label>
+                        <input type="text" name="harga_jual" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label>Harga Beli</label>
+                        <input type="text" name="harga_beli" class="form-control" autocomplete="off">
+=======
                         <input type="text" id="kode" name="kode" class="form-control" autocomplete="off">
                     </div>
                     <div class="mb-3">
@@ -53,6 +106,7 @@
                     <div class="mb-3">
                         <label>Harga Jual</label>
                         <input type="text" id="hargajual" name="hargajual" class="form-control" autocomplete="off">
+>>>>>>> b9d8ac8ae3d159a0e466a7d31d673e32e26ef033
                     </div>
                 </form>
             </div>
@@ -65,6 +119,30 @@
 </div>
 
 <script>
+<<<<<<< HEAD
+    function add() {
+        $('#form')[0].reset();
+        $('#exampleModal').modal('show');
+        $('.modal-title').text('Tambah Produk');
+    }
+
+    function edit() {
+        $('#form')[0].reset();
+        $('#exampleModal').modal('show');
+        $('.modal-title').text('Ganti Produk');
+    }
+
+    function hapus() {
+
+    }
+
+    function simpan(){
+         $('#form')[0].reset();
+        $('#exampleModal').modal('show');
+        $('.modal-title').text('simpan produk');
+        
+    }
+=======
     let save_method = "";
 
     $(document).ready(function() {
@@ -207,4 +285,5 @@
         }
     }
 
+>>>>>>> b9d8ac8ae3d159a0e466a7d31d673e32e26ef033
 </script>
