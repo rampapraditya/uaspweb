@@ -13,10 +13,10 @@
                     <a class="nav-link" aria-current="page" href="index.php?menu=produk">Produk</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="index.php?menu=penjualan">Penjualan</a>
+                    <a class="nav-link" aria-current="page" href="index.php?menu=pembelian">Pembelian</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="index.php?menu=pembelian">Pembelian</a>
+                    <a class="nav-link" aria-current="page" href="index.php?menu=penjualan">Penjualan</a>
                 </li>
             </ul>
         </div>

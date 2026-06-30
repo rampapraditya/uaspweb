@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 25, 2026 at 06:48 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jun 30, 2026 at 06:32 AM
+-- Server version: 8.4.7
+-- PHP Version: 8.3.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,15 +24,49 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `penjualan`
+--
+
+DROP TABLE IF EXISTS `penjualan`;
+CREATE TABLE IF NOT EXISTS `penjualan` (
+  `idpenjualan` varchar(6) COLLATE utf8mb4_general_ci NOT NULL,
+  `tanggal` date NOT NULL,
+  `idsupplier` varchar(6) COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`idpenjualan`),
+  KEY `idsupplier` (`idsupplier`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penjualan_detil`
+--
+
+DROP TABLE IF EXISTS `penjualan_detil`;
+CREATE TABLE IF NOT EXISTS `penjualan_detil` (
+  `idpenjualan_detil` int NOT NULL AUTO_INCREMENT,
+  `idpenjualan` varchar(6) COLLATE utf8mb4_general_ci NOT NULL,
+  `idproduk` varchar(6) COLLATE utf8mb4_general_ci NOT NULL,
+  `jumlah` int NOT NULL,
+  PRIMARY KEY (`idpenjualan_detil`),
+  KEY `idpenjualan` (`idpenjualan`),
+  KEY `idproduk` (`idproduk`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `produk`
 --
 
-CREATE TABLE `produk` (
-  `id` varchar(6) NOT NULL,
-  `nama` varchar(50) NOT NULL,
-  `satuan` varchar(10) NOT NULL,
+DROP TABLE IF EXISTS `produk`;
+CREATE TABLE IF NOT EXISTS `produk` (
+  `id` varchar(6) COLLATE utf8mb4_general_ci NOT NULL,
+  `nama` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `satuan` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
   `hargabeli` double NOT NULL,
-  `hargajual` double NOT NULL
+  `hargajual` double NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -52,12 +86,14 @@ INSERT INTO `produk` (`id`, `nama`, `satuan`, `hargabeli`, `hargajual`) VALUES
 -- Table structure for table `supplier`
 --
 
-CREATE TABLE `supplier` (
-  `id` varchar(6) NOT NULL,
-  `nama` varchar(60) NOT NULL,
-  `alamat` varchar(150) NOT NULL,
-  `kota` varchar(50) NOT NULL,
-  `hp` varchar(30) NOT NULL
+DROP TABLE IF EXISTS `supplier`;
+CREATE TABLE IF NOT EXISTS `supplier` (
+  `id` varchar(6) COLLATE utf8mb4_general_ci NOT NULL,
+  `nama` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `alamat` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  `kota` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `hp` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -72,20 +108,21 @@ INSERT INTO `supplier` (`id`, `nama`, `alamat`, `kota`, `hp`) VALUES
 ('SP05', 'CV Prima Nusantara', 'Jl. Sudirman No. 201', 'Medan', '081667890123');
 
 --
--- Indexes for dumped tables
+-- Constraints for dumped tables
 --
 
 --
--- Indexes for table `produk`
+-- Constraints for table `penjualan`
 --
-ALTER TABLE `produk`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `penjualan`
+  ADD CONSTRAINT `penjualan_ibfk_1` FOREIGN KEY (`idsupplier`) REFERENCES `supplier` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Indexes for table `supplier`
+-- Constraints for table `penjualan_detil`
 --
-ALTER TABLE `supplier`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `penjualan_detil`
+  ADD CONSTRAINT `penjualan_detil_ibfk_1` FOREIGN KEY (`idproduk`) REFERENCES `produk` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `penjualan_detil_ibfk_2` FOREIGN KEY (`idpenjualan`) REFERENCES `penjualan` (`idpenjualan`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
