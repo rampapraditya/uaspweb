@@ -35,6 +35,12 @@ include 'koneksi.php';
           include 'pages/supplier/index.php';
         } else if ($menu == "produk") {
           include 'pages/produk/index.php';
+        } else if ($menu == "penjualan") {
+          include 'pages/penjualan/index.php';
+        } else if ($menu == "tambah-penjualan") {
+          include 'pages/penjualan/detil.php';
+        } else if ($menu == "pembelian") {
+          include 'pages/pembelian/index.php';
         }
       } else {
         include 'pages/dashboard/index.php';
