@@ -8,7 +8,7 @@ $curdate = date('Y-m-d');
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="mb-0"><i class="bi bi-cart-check"></i> Data Penjualan</h2>
-                    <a href="index.php?menu=tambah-penjualan" class="btn btn-success">
+                    <a href="index.php?menu=tambah-penjualan"  class="btn btn-success">
                         <i class="bi bi-plus-circle"></i> Tambah Penjualan
                     </a>
                 </div>
@@ -147,119 +147,5 @@ $curdate = date('Y-m-d');
         });
     }
 
-    function add() {
-        window.location.href = "index.php?menu=tambah-penjualan";
-    }
-
-    function simpan() {
-        let kode = document.getElementById('kode').value;
-        let nama = document.getElementById('nama').value;
-        let satuan = document.getElementById('satuan').value;
-        let hargabeli = document.getElementById('hargabeli').value;
-        let hargajual = document.getElementById('hargajual').value;
-
-        if (kode == "") {
-            alert("Kode produk tidak boleh kosong");
-        } else if (nama == "") {
-            alert("Nama produk tidak boleh kosong");
-        } else if (satuan == "") {
-            alert("Satuan tidak boleh kosong");
-        } else if (hargabeli == "") {
-            alert("Harga beli tidak boleh kosong");
-        } else if (hargajual == "") {
-            alert("Harga jual tidak boleh kosong");
-        } else {
-
-            var form_data = new FormData();
-
-            if (save_method === 'add') {
-                form_data.append('aksi', "simpan");
-            } else {
-                form_data.append('aksi', "ganti");
-            }
-
-            form_data.append('kode', kode);
-            form_data.append('nama', nama);
-            form_data.append('satuan', satuan);
-            form_data.append('hargabeli', hargabeli);
-            form_data.append('hargajual', hargajual);
-
-            $.ajax({
-                url: "pages/produk/proses.php",
-                dataType: 'TEXT',
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: form_data,
-                type: 'POST',
-                success: function(response, status, xhr) {
-                    alert(response);
-                    $('#exampleModal').modal('hide');
-                    loadData();
-                },
-                error: function(response, status, xhr) {
-                    alert(status);
-                }
-            });
-        }
-    }
-
-    function edit(id) {
-        $('#form')[0].reset();
-        $('#exampleModal').modal('show');
-        $('.modal-title').text('Ganti Produk');
-
-        let form_data = new FormData();
-        form_data.append('aksi', 'ambil_data');
-        form_data.append('kode', id);
-
-        // Jalankan AJAX
-        $.ajax({
-            url: 'pages/produk/proses.php',
-            type: 'POST',
-            data: form_data,
-            processData: false,
-            contentType: false,
-            dataType: 'JSON',
-            success: function(response) {
-                if (response.status === 'sukses') {
-                    $('#kode').attr('readonly', true); // biar tidak bisa di edit
-                    $('#kode').val(response.data.id);
-                    $('#nama').val(response.data.nama);
-                    $('#satuan').val(response.data.satuan);
-                    $('#hargabeli').val(response.data.hargabeli);
-                    $('#hargajual').val(response.data.hargajual);
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Gagal mengambil data untuk edit:', error);
-            }
-        });
-    }
-
-    function hapus(id, nama) {
-        if (confirm("Apakah Anda yakin ingin menghapus produk '" + nama + "' (Kode: " + id + ")?")) {
-            let form_data = new FormData();
-            form_data.append('aksi', 'hapus_data');
-            form_data.append('kode', id);
-
-            $.ajax({
-                url: "pages/produk/proses.php",
-                type: 'POST',
-                data: form_data,
-                processData: false,
-                contentType: false,
-                dataType: 'TEXT',
-                success: function(response) {
-                    alert(response);
-                    loadData();
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert(textStatus);
-                }
-            });
-        }
-    }
+    
 </script>

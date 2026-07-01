@@ -4,12 +4,11 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="mb-0"><i class="bi bi-bag-check"></i> Data Pembelian</h2>
-                    <a href="tambah_pembelian.php" class="btn btn-success">
+                    <a href="index.php?menu=tambah-pembelian" class="btn btn-success">
                         <i class="bi bi-plus-circle"></i> Tambah Pembelian
                     </a>
                 </div>
                 <hr>
-
                 <div class="row g-3 mb-3 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label">Tanggal Awal</label>

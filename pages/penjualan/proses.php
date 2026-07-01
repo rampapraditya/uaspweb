@@ -23,17 +23,17 @@ switch ($aksi) {
         $html_string = '';
         while ($row = mysqli_fetch_assoc($query)) {
             $html_string .= "<tr>
-                                    <td style='text-align: center;'>
-                                        <button type='button' class='btn btn-warning btn-sm' onclick=\"view('{$row['Kode']}')\">
-                                            View
-                                        </button>
-                                    </td>
-                                    <th>{$row['Kode']}</th>
-                                    <td>{$row['Tanggal']}</td>
-                                    <td>{$row['Konsumen']}</td>
-                                    <td>{$row['No_HP']}</td>
-                                    <td style='text-align:right;'>" . number_format($row['Grand_Total'], 0, ',', '.') . "</td>
-                                </tr>";
+                                <td style='text-align: center;'>
+                                    <button type='button' class='btn btn-warning btn-sm' onclick=\"view('{$row['Kode']}')\">
+                                        View
+                                    </button>
+                                </td>
+                                <th>{$row['Kode']}</th>
+                                <td>{$row['Tanggal']}</td>
+                                <td>{$row['Konsumen']}</td>
+                                <td>{$row['No_HP']}</td>
+                                <td style='text-align:right;'>" . number_format($row['Grand_Total'], 0, ',', '.') . "</td>
+                            </tr>";
         }
 
         // Jika data di database ternyata kosong
