@@ -6,6 +6,51 @@ include '../../koneksi.php';
 $aksi = $_POST['aksi'] ?? $_GET['aksi'] ?? '';
 
 switch ($aksi) {
+    case 'tampil_data_awal':
+        
+            $query = mysqli_query($conn, "SELECT 
+                p.idpenjualan AS Kode,
+                p.tanggal AS Tanggal,
+                p.konsumen AS Konsumen,
+                p.hp AS No_HP,
+                SUM(pd.jumlah * pr.hargajual) AS Grand_Total
+            FROM penjualan p
+            LEFT JOIN penjualan_detil pd ON p.idpenjualan = pd.idpenjualan
+            LEFT JOIN produk pr ON pd.idproduk = pr.id
+            GROUP BY p.idpenjualan, p.tanggal, p.konsumen, p.hp
+            ORDER BY p.tanggal DESC");
+
+            $html_string = '';
+            while ($row = mysqli_fetch_assoc($query)) {
+                $html_string .= "<tr>
+                                    <td style='text-align: center;'>
+                                        <button type='button' class='btn btn-warning btn-sm' onclick=\"view('{$row['Kode']}')\">
+                                            View
+                                        </button>
+                                    </td>
+                                    <th>{$row['Kode']}</th>
+                                    <td>{$row['Tanggal']}</td>
+                                    <td>{$row['Konsumen']}</td>
+                                    <td>{$row['No_HP']}</td>
+                                    <td style='text-align:right;'>" . number_format($row['Grand_Total'], 0, ',', '.') . "</td>
+                                </tr>";
+            }
+
+            // Jika data di database ternyata kosong
+            if (mysqli_num_rows($query) == 0) {
+                // Diubah menjadi colspan='' karena jumlah kolom pada tabel Anda ada 7 kolom
+                $html_string = "<tr><td colspan='6' style='text-align:center;'>Belum ada data produk.</td></tr>";
+            }
+
+
+            header('Content-Type: application/json');
+
+            echo json_encode([
+                'html' => $html_string
+            ]);
+
+        break;
+
     case 'tampil_data':
         
             $kode = $_POST['kode'];

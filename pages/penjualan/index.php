@@ -51,7 +51,7 @@ $curdate = date('Y-m-d');
                                 <th class="text-end">Grand Total</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tabledata">
                             
                         </tbody>
                     </table>
@@ -111,14 +111,16 @@ $curdate = date('Y-m-d');
         $.ajax({
             url: 'pages/penjualan/proses.php',
             type: 'POST',
+            dataType: 'JSON',
             data: {
-                aksi: 'tampil_data'
+                aksi: 'tampil_data_awal'
             },
             success: function(response) {
-                $('#data-produk').html(response);
+                $('#tabledata').html(response.html);
             },
             error: function(xhr, status, error) {
-                $('#data-produk').html("<tr><td colspan='6' style='text-align:center; color:red;'>Gagal memuat data dari server.</td></tr>");
+                $('#tabledata').html("<tr><td colspan='6' style='text-align:center; color:red;'>Gagal memuat data dari server.</td></tr>");
+                console.log(error);
             }
         });
     }
