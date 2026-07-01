@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2026 at 09:37 AM
+-- Generation Time: Jul 01, 2026 at 10:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,12 +31,16 @@ CREATE TABLE `detail_pembelian` (
   `id` int(11) NOT NULL,
   `kode_pembelian` varchar(36) DEFAULT NULL,
   `kode_barang` varchar(6) DEFAULT NULL,
-  `nama_barang` varchar(100) DEFAULT NULL,
-  `satuan` varchar(20) DEFAULT NULL,
-  `harga` int(11) DEFAULT NULL,
-  `qty` int(11) DEFAULT NULL,
-  `subtotal` int(11) DEFAULT NULL
+  `qty` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `detail_pembelian`
+--
+
+INSERT INTO `detail_pembelian` (`id`, `kode_pembelian`, `kode_barang`, `qty`) VALUES
+(1, '7175b50c-3cfe-4d93-8fc1-299aca3baef6', 'P0001', 2),
+(2, '3319ddad-9452-4225-a8f8-fda3e200bf44', 'P0001', 1);
 
 -- --------------------------------------------------------
 
@@ -56,6 +60,14 @@ CREATE TABLE `pembelian` (
   `bayar` int(11) DEFAULT NULL,
   `kembalian` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pembelian`
+--
+
+INSERT INTO `pembelian` (`kode_pembelian`, `tanggal`, `idsupplier`, `no_hp`, `keterangan`, `total`, `diskon`, `grand_total`, `bayar`, `kembalian`) VALUES
+('3319ddad-9452-4225-a8f8-fda3e200bf44', '2026-07-01', 'SP01', '081123456789', NULL, NULL, NULL, NULL, NULL, NULL),
+('7175b50c-3cfe-4d93-8fc1-299aca3baef6', '2026-07-01', 'SP04', '081556789012', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -211,7 +223,7 @@ ALTER TABLE `supplier`
 -- AUTO_INCREMENT for table `detail_pembelian`
 --
 ALTER TABLE `detail_pembelian`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `penjualan_detil`

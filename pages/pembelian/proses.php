@@ -95,10 +95,10 @@ switch ($aksi) {
         $html_string = '';
         $grandtotal = 0;
 
-        $query = mysqli_query($conn, "SELECT detail_pembelian.kode_pembelian, detail_pembelian.id, detail_pembelian.qty, produk.id, produk.nama, produk.satuan, produk.hargabeli, produk.hargajual 
+        $query = mysqli_query($conn, "SELECT detail_pembelian.id, detail_pembelian.kode_pembelian, detail_pembelian.qty, produk.id, produk.nama, produk.satuan, produk.hargabeli, produk.hargajual 
         FROM detail_pembelian 
         JOIN produk ON detail_pembelian.kode_barang = produk.id 
-        WHERE detail_pembelian.kode_pembelian = '" . $kode . "';");
+        WHERE detail_pembelian.kode_pembelian = '".$kode."';");
 
         while ($row = mysqli_fetch_assoc($query)) {
             // Hitung subtotal untuk baris ini
@@ -140,31 +140,31 @@ switch ($aksi) {
         // Menangkap data dari form_data.append
         $kodeTrans = $_POST['kode'] ?? '';
         $tanggal = $_POST['tanggal'] ?? '';
-        $customer = $_POST['customer'] ?? '';
+        $supplier = $_POST['supplier'] ?? '';
         $hp = $_POST['hp'] ?? '';
-        $keterangan = $_POST['keterangan'] ?? 0;
-        $kodebarang = $_POST['kodebarang'] ?? 0;
-        $qty = $_POST['qty'] ?? 0;
+        $keterangan = $_POST['keterangan'] ?? '';
+        $kodebarang = $_POST['kodebarang'] ?? '';
+        $qty = $_POST['qty'] ?? 1;
 
         // Validasi sederhana agar data tidak kosong
-        if (empty($tanggal) || empty($customer)) {
-            echo "gagal: Tanggal dan customer tidak boleh kosong!";
+        if (empty($tanggal) || empty($supplier)) {
+            echo "gagal: Tanggal dan supplier tidak boleh kosong!";
             exit;
         }
 
         // Query Insert ke database (Sesuaikan dengan nama tabel & kolom Anda)
-        $cek_query  = "SELECT COUNT(*) AS total FROM penjualan WHERE idpenjualan = '$kodeTrans'";
+        $cek_query  = "SELECT COUNT(*) AS total FROM pembelian WHERE kode_pembelian = '$kodeTrans'";
         $cek_result = mysqli_query($conn, $cek_query);
         $cek_data   = mysqli_fetch_assoc($cek_result);
 
         if ($cek_data['total'] < 1) {
-            $query = "INSERT INTO penjualan (idpenjualan, tanggal, konsumen, hp) VALUES ('$kodeTrans', '$tanggal', '$customer', '$hp')";
+            $query = "INSERT INTO pembelian (kode_pembelian, tanggal, idsupplier, no_hp) VALUES ('$kodeTrans', '$tanggal', '$supplier', '$hp')";
             mysqli_query($conn, $query);
         }
 
 
         // simpan detil
-        $query = "INSERT INTO penjualan_detil (idpenjualan, idproduk, jumlah) VALUES ('$kodeTrans', '$kodebarang', '$qty')";
+        $query = "INSERT INTO detail_pembelian (kode_pembelian, kode_barang, qty) VALUES ('$kodeTrans', '$kodebarang', '$qty')";
         $simpan = mysqli_query($conn, $query);
 
         if ($simpan) {
@@ -197,7 +197,6 @@ switch ($aksi) {
 
         $kode = $_POST['kode'] ?? '';
 
-        // Query mengambil data berdasarkan ID/Kode
         $query = mysqli_query($conn, "SELECT * FROM produk WHERE id = '$kode'");
         $data  = mysqli_fetch_assoc($query);
 
@@ -214,6 +213,25 @@ switch ($aksi) {
         }
 
         break;
+    case 'show_supplier':
+        $kode = $_POST['kode'] ?? '';
+
+        $query = mysqli_query($conn, "SELECT * FROM supplier WHERE id = '$kode'");
+        $data  = mysqli_fetch_assoc($query);
+
+        if ($data) {
+            echo json_encode([
+                'status' => 'sukses',
+                'data'   => $data
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'gagal',
+                'message' => 'Data produk tidak ditemukan.'
+            ]);
+        }
+        break;
+
     default:
         echo "Aksi tidak dikenal.";
         break;
