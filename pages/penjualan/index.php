@@ -18,15 +18,15 @@ $curdate = date('Y-m-d');
                     <input type="hidden" name="filter" value="1">
                     <div class="col-md-3">
                         <label class="form-label">Tanggal Awal</label>
-                        <input type="date" name="tanggal_awal" class="form-control" value="<?php echo $curdate; ?>">
+                        <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control" value="<?php echo $curdate; ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Tanggal Akhir</label>
-                        <input type="date" name="tanggal_akhir" class="form-control" value="<?php echo $curdate; ?>">
+                        <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" value="<?php echo $curdate; ?>">
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex flex-wrap gap-2">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="button" class="btn btn-primary" onclick="filter()">
                                 <i class="bi bi-funnel"></i> Filter
                             </button>
                             <a href="penjualan.php" class="btn btn-secondary">
@@ -114,6 +114,28 @@ $curdate = date('Y-m-d');
             dataType: 'JSON',
             data: {
                 aksi: 'tampil_data_awal'
+            },
+            success: function(response) {
+                $('#tabledata').html(response.html);
+            },
+            error: function(xhr, status, error) {
+                $('#tabledata').html("<tr><td colspan='6' style='text-align:center; color:red;'>Gagal memuat data dari server.</td></tr>");
+                console.log(error);
+            }
+        });
+    }
+
+    function filter(){
+        let tanggal_awal = document.getElementById('tanggal_awal').value;
+        let tanggal_akhir = document.getElementById('tanggal_akhir').value;
+        $.ajax({
+            url: 'pages/penjualan/proses.php',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+                aksi: 'tampil_data_awal_filter',
+                tgl_mulai : tanggal_awal,
+                tgl_selesai : tanggal_akhir
             },
             success: function(response) {
                 $('#tabledata').html(response.html);

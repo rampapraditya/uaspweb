@@ -7,8 +7,8 @@ $aksi = $_POST['aksi'] ?? $_GET['aksi'] ?? '';
 
 switch ($aksi) {
     case 'tampil_data_awal':
-        
-            $query = mysqli_query($conn, "SELECT 
+
+        $query = mysqli_query($conn, "SELECT 
                 p.idpenjualan AS Kode,
                 p.tanggal AS Tanggal,
                 p.konsumen AS Konsumen,
@@ -20,9 +20,9 @@ switch ($aksi) {
             GROUP BY p.idpenjualan, p.tanggal, p.konsumen, p.hp
             ORDER BY p.tanggal DESC");
 
-            $html_string = '';
-            while ($row = mysqli_fetch_assoc($query)) {
-                $html_string .= "<tr>
+        $html_string = '';
+        while ($row = mysqli_fetch_assoc($query)) {
+            $html_string .= "<tr>
                                     <td style='text-align: center;'>
                                         <button type='button' class='btn btn-warning btn-sm' onclick=\"view('{$row['Kode']}')\">
                                             View
@@ -34,37 +34,75 @@ switch ($aksi) {
                                     <td>{$row['No_HP']}</td>
                                     <td style='text-align:right;'>" . number_format($row['Grand_Total'], 0, ',', '.') . "</td>
                                 </tr>";
-            }
+        }
 
-            // Jika data di database ternyata kosong
-            if (mysqli_num_rows($query) == 0) {
-                // Diubah menjadi colspan='' karena jumlah kolom pada tabel Anda ada 7 kolom
-                $html_string = "<tr><td colspan='6' style='text-align:center;'>Belum ada data produk.</td></tr>";
-            }
-
-
-            header('Content-Type: application/json');
-
-            echo json_encode([
-                'html' => $html_string
-            ]);
+        // Jika data di database ternyata kosong
+        if (mysqli_num_rows($query) == 0) {
+            $html_string = "<tr><td colspan='6' style='text-align:center;'>Belum ada data produk.</td></tr>";
+        }
+        header('Content-Type: application/json');
+        echo json_encode([
+            'html' => $html_string
+        ]);
 
         break;
+    case 'tampil_data_awal_filter':
+        $tgl_mulai = isset($_POST['tgl_mulai']) ? mysqli_real_escape_string($conn, $_POST['tgl_mulai']) : date('Y-m-01');
+        $tgl_selesai = isset($_POST['tgl_selesai']) ? mysqli_real_escape_string($conn, $_POST['tgl_selesai']) : date('Y-m-d');
 
-    case 'tampil_data':
-        
-            $kode = $_POST['kode'];
-            $html_string = '';
-            $grandtotal = 0;
+        // Query SQL dengan tambahan klausa WHERE BETWEEN
+        $sql = "SELECT 
+                p.idpenjualan AS kode, 
+                p.tanggal AS tanggal, 
+                p.konsumen AS konsumen, 
+                p.hp AS no_hp, 
+                SUM(pd.jumlah * pr.hargajual) AS grand_total 
+            FROM penjualan p 
+            INNER JOIN penjualan_detil pd ON p.idpenjualan = pd.idpenjualan 
+            INNER JOIN produk pr ON pd.idproduk = pr.id 
+            WHERE p.tanggal BETWEEN '$tgl_mulai' AND '$tgl_selesai'
+            GROUP BY p.idpenjualan, p.tanggal, p.konsumen, p.hp 
+            ORDER BY p.tanggal DESC";
 
-            $query = mysqli_query($conn, "SELECT penjualan_detil.idpenjualan_detil, penjualan_detil.jumlah, produk.id, produk.nama, produk.satuan, produk.hargabeli, produk.hargajual FROM penjualan_detil JOIN produk ON penjualan_detil.idproduk = produk.id WHERE penjualan_detil.idpenjualan = '".$kode."';");
+        $query = mysqli_query($conn, $sql);
+        $html_string = '';
 
+        if (mysqli_num_rows($query) > 0) {
             while ($row = mysqli_fetch_assoc($query)) {
-                // Hitung subtotal untuk baris ini
-                $subtotal = $row['hargajual'] * $row['jumlah'];
-                $grandtotal += $subtotal;
+                $html_string .= "<tr> 
+                <td style='text-align: center;'> 
+                    <button type='button' class='btn btn-warning btn-sm' onclick=\"view('{$row['kode']}')\">view</button> 
+                </td> 
+                <th>{$row['kode']}</th> 
+                <td>{$row['tanggal']}</td> 
+                <td>{$row['konsumen']}</td> 
+                <td>{$row['no_hp']}</td> 
+                <td style='text-align:right;'>" . number_format($row['grand_total'], 0, ',', '.') . "</td> 
+            </tr>";
+            }
+        } else {
+            $html_string = "<tr><td colspan='6' style='text-align:center;'>Belum ada data penjualan untuk periode ini.</td></tr>";
+        }
 
-                $html_string .= "<tr>
+        header('Content-Type: application/json');
+        echo json_encode([
+            'html' => $html_string
+        ]);
+        break;
+    case 'tampil_data':
+
+        $kode = $_POST['kode'];
+        $html_string = '';
+        $grandtotal = 0;
+
+        $query = mysqli_query($conn, "SELECT penjualan_detil.idpenjualan_detil, penjualan_detil.jumlah, produk.id, produk.nama, produk.satuan, produk.hargabeli, produk.hargajual FROM penjualan_detil JOIN produk ON penjualan_detil.idproduk = produk.id WHERE penjualan_detil.idpenjualan = '" . $kode . "';");
+
+        while ($row = mysqli_fetch_assoc($query)) {
+            // Hitung subtotal untuk baris ini
+            $subtotal = $row['hargajual'] * $row['jumlah'];
+            $grandtotal += $subtotal;
+
+            $html_string .= "<tr>
                                     <td style='text-align: center;'>
                                         <button type='button' class='btn btn-warning btn-sm' onclick=\"view('{$row['idpenjualan_detil']}')\">
                                             View
@@ -77,21 +115,21 @@ switch ($aksi) {
                                     <td>{$row['jumlah']}</td>
                                     <td>" . number_format($subtotal, 0, ',', '.') . "</td>
                                 </tr>";
-            }
+        }
 
-            // Jika data di database ternyata kosong
-            if (mysqli_num_rows($query) == 0) {
-                // Diubah menjadi colspan='7' karena jumlah kolom pada tabel Anda ada 7 kolom
-                $html_string = "<tr><td colspan='7' style='text-align:center;'>Belum ada data produk.</td></tr>";
-            }
+        // Jika data di database ternyata kosong
+        if (mysqli_num_rows($query) == 0) {
+            // Diubah menjadi colspan='7' karena jumlah kolom pada tabel Anda ada 7 kolom
+            $html_string = "<tr><td colspan='7' style='text-align:center;'>Belum ada data produk.</td></tr>";
+        }
 
 
-            header('Content-Type: application/json');
+        header('Content-Type: application/json');
 
-            echo json_encode([
-                'html' => $html_string,
-                'grandtotal' => $grandtotal
-            ]);
+        echo json_encode([
+            'html' => $html_string,
+            'grandtotal' => $grandtotal
+        ]);
 
         break;
 
@@ -120,7 +158,7 @@ switch ($aksi) {
             $query = "INSERT INTO penjualan (idpenjualan, tanggal, konsumen, hp) VALUES ('$kodeTrans', '$tanggal', '$customer', '$hp')";
             mysqli_query($conn, $query);
         }
-        
+
 
         // simpan detil
         $query = "INSERT INTO penjualan_detil (idpenjualan, idproduk, jumlah) VALUES ('$kodeTrans', '$kodebarang', '$qty')";
@@ -148,7 +186,7 @@ switch ($aksi) {
         } else {
             echo json_encode([
                 'status' => 'gagal',
-                'message'=> 'Data produk tidak ditemukan.'
+                'message' => 'Data produk tidak ditemukan.'
             ]);
         }
         break;
@@ -175,7 +213,7 @@ switch ($aksi) {
         }
         break;
     case 'hapus_data':
-        
+
         // Tangkap kode produk yang mau dihapus dari form_data.append('kode', ...)
         $kode = $_POST['kode'] ?? '';
 
@@ -197,7 +235,7 @@ switch ($aksi) {
         }
         break;
     case 'show_barang':
-        
+
         $kode = $_POST['kode'] ?? '';
 
         // Query mengambil data berdasarkan ID/Kode
@@ -212,7 +250,7 @@ switch ($aksi) {
         } else {
             echo json_encode([
                 'status' => 'gagal',
-                'message'=> 'Data produk tidak ditemukan.'
+                'message' => 'Data produk tidak ditemukan.'
             ]);
         }
 
